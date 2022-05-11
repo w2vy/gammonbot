@@ -1,6 +1,6 @@
 #!/bin/sh
 
-wget https://github.com/w2vy/FluxVault/blob/main/FluxVault.py
+wget https://raw.githubusercontent.com/w2vy/FluxVault/main/FluxVault.py
 chmod +x FluxVault.py
 ./FluxVault.py Node $FLUX_PORT $VAULT_DNS botlist.pl&
 
