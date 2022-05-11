@@ -1,0 +1,29 @@
+#~/usr/bin/bash
+
+while [ true ]
+do
+   if [[ -r botlist.pl ]] 
+   then
+      # We have our configuration
+      if [[ -e .bot_running ]]
+      then
+         # Bot is running
+         echo "Bot is running"
+      else
+         rm -f mybot.pl
+         perl findbot.pl
+         if [[ -e mybot.pl ]]
+         then
+           # We have a botid to use
+           touch .bot_running
+           perl gammonbot.pl
+           rm .bot_running
+         fi
+      fi
+   else
+      echo "Waiting for config"
+      #cp botlist.pl.sav botlist.pl
+   fi
+   echo Check again in 10 sec
+   sleep 10s
+done

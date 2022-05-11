@@ -1,0 +1,21 @@
+In drawboard.c
+
+extern char *
+FormatMove(char *sz, const TanBoard anBoard, int anMove[8])
+{
+    return FormatMovePlain(sz, anBoard, anMove);
+/*
+...
+*/
+}
+
+In configure.ac
+
+dnl -O2             1:23         
+dnl -O3             1:14         
+dnl -O3 -ffast-math 1:11
+AM_CFLAGS="-Ofast $AM_CFLAGS"
+if test x"$GCC" = "xyes"; then   
+    AM_CFLAGS="-ffast-math $AM_CFLAGS"
+fi
+

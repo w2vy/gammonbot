@@ -1,0 +1,149 @@
+diff -ruN gnubg_orig/configure.ac gnubg/configure.ac
+--- gnubg_orig/configure.ac	2021-10-27 16:56:03.000000000 +0200
++++ gnubg/configure.ac	2022-02-20 20:50:12.032706075 +0100
+@@ -621,7 +621,7 @@
+ dnl -O2             1:23
+ dnl -O3             1:14
+ dnl -O3 -ffast-math 1:11
+-AM_CFLAGS="-O3 $AM_CFLAGS"
++AM_CFLAGS="-Ofast $AM_CFLAGS"
+ if test x"$GCC" = "xyes"; then
+     AM_CFLAGS="-ffast-math $AM_CFLAGS"
+ fi
+diff -ruN gnubg_orig/drawboard.c gnubg/drawboard.c
+--- gnubg_orig/drawboard.c	2021-09-20 23:08:25.000000000 +0200
++++ gnubg/drawboard.c	2022-02-20 20:51:06.784016176 +0100
+@@ -585,132 +585,7 @@
+ extern char *
+ FormatMove(char *sz, const TanBoard anBoard, const int anMove[8])
+ {
+-
+-    char *pch = sz;
+-    int aanMove[4][4], *pnSource[4], *pnDest[4], i, j;
+-    int fl = 0;
+-    int anCount[4], nMoves, nDuplicate, k;
+-
+-    /* Re-order moves into 2-dimensional array. */
+-    for (i = 0; i < 4 && anMove[i << 1] >= 0; i++) {
+-        aanMove[i][0] = anMove[i << 1] + 1;
+-        aanMove[i][1] = anMove[(i << 1) | 1] + 1;
+-        pnSource[i] = aanMove[i];
+-        pnDest[i] = aanMove[i] + 1;
+-    }
+-
+-    while (i < 4) {
+-        aanMove[i][0] = aanMove[i][1] = -1;
+-        pnSource[i++] = NULL;
+-    }
+-
+-    /* Order the moves in decreasing order of source point. */
+-    qsort(aanMove, 4, 4 * sizeof(int), CompareMovesSimple);
+-
+-    /* Combine moves of a single chequer. */
+-    for (i = 0; i < 4; i++)
+-        for (j = i; j < 4; j++)
+-            if (pnSource[i] && pnSource[j] && *pnDest[i] == *pnSource[j]) {
+-                if (anBoard[0][24 - *pnDest[i]])
+-                    /* Hitting blot; record intermediate point. */
+-                    *++pnDest[i] = *pnDest[j];
+-                else
+-                    /* Non-hit; elide intermediate point. */
+-                    *pnDest[i] = *pnDest[j];
+-
+-                pnSource[j] = NULL;
+-            }
+-
+-    /* Compact array. */
+-    i = 0;
+-
+-    for (j = 0; j < 4; j++)
+-        if (pnSource[j]) {
+-            if (j > i) {
+-                pnSource[i] = pnSource[j];
+-                pnDest[i] = pnDest[j];
+-            }
+-
+-            i++;
+-        }
+-
+-    while (i < 4)
+-        pnSource[i++] = NULL;
+-
+-    for (i = 0; i < 4; i++)
+-        anCount[i] = pnSource[i] ? 1 : 0;
+-
+-    for (i = 0; i < 3; i++) {
+-        if (pnSource[i]) {
+-            nMoves = (int) (pnDest[i] - pnSource[i]);
+-            for (j = i + 1; j < 4; j++) {
+-                if (pnSource[j]) {
+-                    nDuplicate = 1;
+-
+-                    if (pnDest[j] - pnSource[j] != nMoves)
+-                        nDuplicate = 0;
+-                    else
+-                        for (k = 0; k <= nMoves && nDuplicate; k++) {
+-                            if (pnSource[i][k] != pnSource[j][k])
+-                                nDuplicate = 0;
+-                        }
+-                    if (nDuplicate) {
+-                        anCount[i]++;
+-                        pnSource[j] = NULL;
+-                    }
+-                }
+-            }
+-        }
+-    }
+-
+-    /* Compact array. */
+-    i = 0;
+-
+-    for (j = 0; j < 4; j++)
+-        if (pnSource[j]) {
+-            if (j > i) {
+-                pnSource[i] = pnSource[j];
+-                pnDest[i] = pnDest[j];
+-                anCount[i] = anCount[j];
+-            }
+-
+-            i++;
+-        }
+-
+-    if (i < 4)
+-        pnSource[i] = NULL;
+-
+-    for (i = 0; i < 4 && pnSource[i]; i++) {
+-        if (i)
+-            *pch++ = ' ';
+-
+-        pch = FormatPoint(pch, *pnSource[i]);
+-
+-        for (j = 1; pnSource[i] + j < pnDest[i]; j++) {
+-            *pch = '/';
+-            pch = FormatPoint(pch + 1, pnSource[i][j]);
+-            *pch++ = '*';
+-            fl |= 1 << pnSource[i][j];
+-        }
+-
+-        *pch = '/';
+-        pch = FormatPoint(pch + 1, *pnDest[i]);
+-
+-        if (*pnDest[i] && anBoard[0][24 - *pnDest[i]] && !(fl & (1 << *pnDest[i]))) {
+-            *pch++ = '*';
+-            fl |= 1 << *pnDest[i];
+-        }
+-
+-        if (anCount[i] > 1) {
+-            *pch++ = '(';
+-            *pch++ = (char) ('0' + anCount[i]);
+-            *pch++ = ')';
+-        }
+-    }
+-
+-    *pch = 0;
+-
+-    return sz;
++    return FormatMovePlain(sz, anBoard, anMove);
+ }
+ 
+ extern int
