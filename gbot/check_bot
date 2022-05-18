@@ -24,6 +24,6 @@ do
       echo "Waiting for config"
       #cp botlist.pl.sav botlist.pl
    fi
-   echo Check again in 10 sec
-   sleep 10s
+   #echo Check again in 10 sec
+   sleep 10m
 done

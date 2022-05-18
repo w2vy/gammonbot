@@ -101,6 +101,16 @@ RUN mkdir --parents /${GNUBG_INSTALL_DIRECTORY}
 RUN set -ex && \
     apk add --no-cache perl perl-scalar-list-utils perl-time-hires perl-carp
 
+# Python
+#RUN set -ex && \
+#     apk add --no-cache python3
+# Install python/pip
+ENV PYTHONUNBUFFERED=1
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install --no-cache --upgrade pip setuptools
+RUN apk add gcc g++ make libffi-dev openssl-dev git
+RUN pip3 install pycryptodome
 # Copy our scripts
 WORKDIR ${GBOT_INSTALL_DIRECTORY}
 COPY ${GBOT_SOURCE_DIRECTORY}/* ./
