@@ -5,10 +5,10 @@
 #######################################################################
 
 # True if we want to log everything, false to be quiet
-$DO_PRINT = 0;
+#$DO_PRINT = 0;
 
-# Maintance mode, only allow admins to play if true
-$maint_mode = 0;
+# Maintance mode, only allow admins to play if true - set in botlist.pl config file loaded at runtime
+#$maint_mode = 0;
 
 #######################################################################
 #                 End of customizable parameters.                     *

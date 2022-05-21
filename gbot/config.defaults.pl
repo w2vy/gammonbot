@@ -97,7 +97,8 @@ $USE_STDIN = 0;
 # many of these as you like.  Do not remove the plug for ParlorPlay!
 #
 @INITIAL_GREETINGS = (
-	"Hi, I am a computer program. Enjoy your match. If I stop responding, please send the respective command 'move', 'join', or 'roll' in kibitz."
+	"Hi, I am a computer program. Enjoy your match. If I stop responding, please send the respective command 'move', 'join', or 'roll' in kibitz.",
+	"I am running from all over the world on the decentralized Flux network, see http://RunonFlux.io"
 # "Visit www.parlorplay.com for a nice browser interface to FIBS, or to learn about me.",
 # "Visit www.fibsboard.com and share your FIBS experiences.",
 # "Kibitz move or roll if i stop responding.",

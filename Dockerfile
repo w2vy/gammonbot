@@ -113,6 +113,8 @@ RUN python3 -m ensurepip
 RUN pip3 install --no-cache --upgrade pip setuptools
 RUN apk add gcc g++ make libffi-dev openssl-dev git
 RUN pip3 install pycryptodome
+RUN pip3 install requests
+
 # Copy our scripts
 WORKDIR ${GBOT_INSTALL_DIRECTORY}
 COPY ${GBOT_SOURCE_DIRECTORY}/* ./

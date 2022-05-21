@@ -45,8 +45,6 @@ open( STDERR, ">&STDOUT" ) || die "Can't dup stdout";
 
 our $BOTID   = $ARGV[0];
 our $BOTPASS = $ARGV[1];
-# The following gets BOTID and BOTPASS from findfree.pl created mybot.pl
-require "mybot.pl";
 
 # from config
 our $PATH_TO_GNUBG;
@@ -83,6 +81,9 @@ $mat_log = 0;
 
 # load config defaults
 require "config.defaults.pl";
+
+# The following gets BOTID and BOTPASS from findbot.pl created mybot.pl
+require "mybot.pl";
 
 # use the next to change any defaults, also bot strentgh file
 require "config.pl";
@@ -1114,7 +1115,7 @@ sub procFibsLine($) {
 	# them from the saved_matches
 	#
 	elsif ( $line =~ m/^\*\* There is no one called (\w+)\s*$/ ) {
-		if ( $1 eq $saved_matches[0] ) {
+		if ( defined( $saved_matches[0] ) && $1 eq $saved_matches[0] ) {
 			shift(@saved_matches);
 			$invite_pending = 0;    # Discard invite
 		}
@@ -1125,7 +1126,7 @@ sub procFibsLine($) {
 	#
 	elsif ( $line =~ m/^\*\* (\w+) is already playing with someone else.\s*$/ )
 	{
-		if ( $1 eq $saved_matches[0] ) {
+		if ( defined( $saved_matches[0] ) && $1 eq $saved_matches[0] ) {
 			shift(@saved_matches);
 			$invite_pending = 0;    # Discard invite
 		}
