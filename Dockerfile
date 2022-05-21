@@ -44,8 +44,10 @@ RUN chmod +x autogen.sh && ./autogen.sh
 # The binary is meant for use in a FIBS gammonbot, we need only
 # an absolute minimum of functionality. So let's exclude the fancy stuff.
 # Also, we want to be fast bot, so ramp up compiler optimizations
+
+#CFLAGS="--pipe -Ofast -march=native -mtune=native"
 RUN \
-CFLAGS="--pipe -Ofast -march=native -mtune=native" \
+CFLAGS="--pipe -Ofast" \
 CC=gcc \
  ./configure \
  --prefix=${GNUBG_INSTALL_DIRECTORY} \

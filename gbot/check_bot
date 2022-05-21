@@ -1,28 +1,40 @@
 #~/usr/bin/bash
 
+rm -f botlist.pl
+echo "Waiting for config" > status.txt
+
 while [ true ]
 do
    if [[ -r botlist.pl ]] 
    then
-      # We have our configuration
-      if [[ -e .bot_running ]]
+      if [[ -e .have_config ]]
       then
-         # Bot is running
-         echo "Bot is running"
-      else
-         rm -f mybot.pl
-         perl findbot.pl
-         if [[ -e mybot.pl ]]
+         # We have our configuration
+         if [[ ! -e .bot_running ]]
          then
-           # We have a botid to use
-           touch .bot_running
-           perl gammonbot.pl
-           rm .bot_running
+            rm -f mybot.pl
+            perl findbot.pl
+            if [[ -e mybot.pl ]]
+            then
+               rm -f .need_bot
+               echo "Start Bot" > status.txt
+               # We have a botid to use
+               touch .bot_running
+               perl gammonbot.pl
+               rm .bot_running
+               echo "Bot exited" > status.txt
+            else
+               if [[ ! -e .need_bot ]]
+               then
+                  touch .need_bot
+                  echo "Need Bot ID" > status.txt
+               fi
+            fi
          fi
+      else
+         # file exists but .have_config does not
+         touch .have_config
       fi
-   else
-      echo "Waiting for config"
-      #cp botlist.pl.sav botlist.pl
    fi
    #echo Check again in 10 sec
    sleep 1m
