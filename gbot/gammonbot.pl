@@ -68,9 +68,9 @@ our $FIBS_SERVER_PORT;
 
 # from config, no longer used
 # FIXME: remove
-# our $do_fibs_log;
+our $do_fibs_log;
 # our $file_base;
-# our $log_file;
+our $log_file;
 # our $TELL_REPLY;
 # our $RESUME_DELAY;
 # our $MATCH_DELAY;
@@ -291,6 +291,12 @@ my $fileno_fibs = $fibs_socket->fileno();
 my $fileno_stdin;
 $fileno_stdin = STDIN->fileno() if ($USE_STDIN);
 
+# Open log file if enabled
+if ($do_fibs_log) {
+	open( FIBSLOG, ">", $log_file ) or die("Cannot open ($log_file) log");
+	FIBSLOG->autoflush(1);
+}
+print "fibs log: " . $do_fibs_log . " file " . $log_file . "\n";
 #######################################################################
 #                            Main Loop                                #
 #######################################################################
@@ -367,6 +373,7 @@ sub shutdown() {
 	$gnubg_in->close()    if ($gnubg_in);
 	$fibs_socket->close() if ($fibs_socket);
 	MATLOG->close()       if ($mat_log);
+	FIBSLOG->close()      if ($do_fibs_log);
 
 	waitpid( $gnubg_pid, 0 ) if ($gnubg_pid);
 	exit(0);
@@ -518,6 +525,9 @@ sub do_log_line($) {
 	my $line = shift;
 	if ($DO_PRINT) {
 		print $line . "\n";
+	}
+	if ($do_fibs_log) {
+		print FIBSLOG $line . "\n";
 	}
 }
 

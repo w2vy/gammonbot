@@ -12,7 +12,7 @@
 $PATH_TO_GNUBG = "/gnubg/install/bin/gnubg"; 
 
 # Maintance mode, only allow admins to play if true
-$maint_mode = 1;
+$maint_mode = 0;
 
 # The FIBS login names of the bot administrators. The bot treats chat
 # messages from this persons specially.  Telling the bot "last" will
@@ -81,13 +81,13 @@ $ADMIN_EMAIL = "bots\@moulton.us";
 
 
 # Log all I/O to a single file
-# $log_file = "logs/" . $BOTID . "/bot.txt";
+$log_file = "botlog.txt";
 
-# $do_fibs_log = 0;
+$do_fibs_log = 0;
 
 # True if we want to log everything, false to be quiet
 
-$DO_PRINT = 1;
+$DO_PRINT = 0;
 
 # True if we want to use stdin for 'last' command as well
 

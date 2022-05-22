@@ -45,9 +45,8 @@ RUN chmod +x autogen.sh && ./autogen.sh
 # an absolute minimum of functionality. So let's exclude the fancy stuff.
 # Also, we want to be fast bot, so ramp up compiler optimizations
 
-#CFLAGS="--pipe -Ofast -march=native -mtune=native"
 RUN \
-CFLAGS="--pipe -Ofast" \
+CFLAGS="--pipe -Ofast -march=core2 -mtune=native" \
 CC=gcc \
  ./configure \
  --prefix=${GNUBG_INSTALL_DIRECTORY} \
@@ -57,8 +56,10 @@ CC=gcc \
  --without-sqlite \
  --disable-threads \
  --without-python \
- --without-libcurl
-RUN make install && \
+ --without-libcurl \
+ --disable-cputest\
+ --enable-simd=sse2
+ RUN make install && \
   rm -f ${GNUBG_INSTALL_DIRECTORY}/bin/bearoffdump \
         ${GNUBG_INSTALL_DIRECTORY}/bin/makehyper \
         ${GNUBG_INSTALL_DIRECTORY}/bin/makeweights \

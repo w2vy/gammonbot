@@ -1,0 +1,14 @@
+#~/usr/bin/bash
+
+cd /home/gammonbot
+
+if [[ -r botlist.pl ]] 
+then
+   # We have our configuration
+   if [[ ! -e .bot_running ]]
+   then
+      /home/gammonbot/check_bot&
+   fi
+else
+   echo "Waiting for config" > status.txt
+fi
