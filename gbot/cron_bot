@@ -2,13 +2,19 @@
 
 cd /home/gammonbot
 
-if [[ -r botlist.pl ]] 
-then
-   # We have our configuration
-   if [[ ! -e .bot_running ]]
+if [[ ! -r .cronbot ]]
+   touch .cronbot
+   if [[ -r botlist.pl ]] 
    then
-      /home/gammonbot/check_bot&
+      # We have our configuration
+      if [[ ! -e .check_bot ]]
+      then
+         touch .check_bot
+         /home/gammonbot/check_bot&
+         rm -f .check_bot
+      fi
+   else
+      echo "Waiting for config" > status.txt
    fi
-else
-   echo "Waiting for config" > status.txt
+   rm -f .cronbot
 fi
