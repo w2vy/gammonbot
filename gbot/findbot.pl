@@ -31,6 +31,8 @@ sub main() {
 	if (not $lock_sock) {
 		print "null socket\r\n";
 	} else {
+		# Give the previous bot time to startup
+		sleep(5);
 		print "open socket\r\n";
 		foreach (@BOT_NAMES) {
 			$gbot = find_idle_bot($_);
@@ -43,6 +45,9 @@ sub main() {
 			print FH '$BOTID = "' . $gbot . '";' . "\r\n";
 			print FH '$BOTPASS = "' . $BOT_PASSWD . '";' . "\r\n";
 			close(FH);
+		} else {
+			print "No bot found\r\n";
+			sleep(15);
 		}
 	}
 	exit;
