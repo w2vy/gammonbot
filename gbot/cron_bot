@@ -3,6 +3,7 @@
 cd /home/gammonbot
 
 if [[ ! -r .cronbot ]]
+then
    touch .cronbot
    if [[ -r botlist.pl ]] 
    then
