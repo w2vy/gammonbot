@@ -6,7 +6,7 @@ then
    if [[ ! -e .bot_running ]]
    then
       rm -f mybot.pl
-      perl findbot.pl
+      perl findbotw.pl
       if [[ -e mybot.pl ]]
       then
          rm -f .need_bot
