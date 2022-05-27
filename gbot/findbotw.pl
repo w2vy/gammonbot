@@ -167,6 +167,7 @@ sub who_bot() {
 	my $names;
 	my @names;
 
+	print "Command " . $command . "\n";
 	$fibs_socket->syswrite($command);
 
 	while ( $isLooking ) {
@@ -179,6 +180,7 @@ sub who_bot() {
 				$pos = index($string, "Try one of");
 				if ( $pos ne -1 ) {
 					$names = substr($string, $pos+12);
+					print $names + "\n";
 					@names = split(/, /, $names);
 					foreach ( @bots ) {
 						if (not($_ ~~ @names)) {
