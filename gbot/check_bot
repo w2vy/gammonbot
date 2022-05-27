@@ -1,27 +1,33 @@
 #~/usr/bin/bash
 
-if [[ -r botlist.pl ]] 
+if [[ ! -e .check_bot ]]
 then
-   # We have our configuration
-   if [[ ! -e .bot_running ]]
+   touch .check_bot
+
+   if [[ -r botlist.pl ]] 
    then
-      rm -f mybot.pl
-      perl findbotw.pl
-      if [[ -e mybot.pl ]]
+      # We have our configuration
+      if [[ ! -e .bot_running ]]
       then
-         rm -f .need_bot
-         echo "Start Bot" > status.txt
-         # We have a botid to use
-         touch .bot_running
-         perl gammonbot.pl
-         rm .bot_running
-         echo "Bot exited" > status.txt
-      else
-         if [[ ! -e .need_bot ]]
+         rm -f mybot.pl
+         perl findbotw.pl
+         if [[ -e mybot.pl ]]
          then
-            touch .need_bot
-            echo "Need Bot ID" > status.txt
+            rm -f .need_bot
+            echo "Start Bot" > status.txt
+            # We have a botid to use
+            touch .bot_running
+            perl gammonbot.pl
+            rm .bot_running
+            echo "Bot exited" > status.txt
+         else
+            if [[ ! -e .need_bot ]]
+            then
+               touch .need_bot
+               echo "Need Bot ID" > status.txt
+            fi
          fi
       fi
    fi
+   rm -f .check_bot
 fi

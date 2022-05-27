@@ -8,12 +8,7 @@ then
    if [[ -r botlist.pl ]] 
    then
       # We have our configuration
-      if [[ ! -e .check_bot ]]
-      then
-         touch .check_bot
-         /home/gammonbot/check_bot&
-         rm -f .check_bot
-      fi
+      /home/gammonbot/check_bot&
    else
       echo "Waiting for config" > status.txt
    fi
