@@ -34,9 +34,9 @@ sub main() {
 		# Give the previous bot time to startup
 		sleep(5);
 		print "open socket\r\n";
-		$gbot = who_bot($lock_sock, @BOT_NAMES, "who GammonBo\r");
+		$gbot = who_bot($lock_sock, "who GammonBo\r", @BOT_NAMES);
 		if (length($gbot) == 0) {
-			$gbot = who_bot($lock_sock, @BOT_NAMES, "who BlunderBo\r");
+			$gbot = who_bot($lock_sock, "who BlunderBo\r", @BOT_NAMES);
 		}
 		$lock_sock->close() if $lock_sock;
 		if (length($gbot)) {
@@ -161,31 +161,26 @@ sub who_bot() {
 	my $botname="";
 	my @args = @_;
 	my $fibs_socket = $args[0];
-	my @bots = $args[1];
-	my $command = $args[2];
+	my $command = $args[1];
+	my @bots = $args[2];
 	my $select          = IO::Select->new($fibs_socket);
 	my $names;
 	my @names;
 
 	$fibs_socket->syswrite($command);
 
-	printf "Looking for " . $botname . "\r\n";
 	while ( $isLooking ) {
 		while ( $char ne "\n"  and $isLooking) {
 			$select->can_read(1);
 			$bytes_read = $fibs_socket->sysread( $char, 1 );
 			if ( $char ne "\n" ) {
 				$string .= $char if ($bytes_read);
+				print $string . "\n";
 			} else {
-				print "from fibs: " . $string . "\n";
 				$pos = index($string, "Try one of");
-				print "Found at " . $pos . "\n";
 				if ( $pos ne -1 ) {
 					$names = substr($string, $pos+12);
-					print "names " . $names . "\n";
 					@names = split(/, /, $names);
-					print "bots" . "\n";
-					print join(", ", @names) . "\n";
 					foreach ( @bots ) {
 						if (not($_ ~~ @names)) {
 							$botname = $_;
@@ -200,4 +195,3 @@ sub who_bot() {
 	}
 	return $botname;
 }
-
