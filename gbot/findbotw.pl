@@ -175,7 +175,6 @@ sub who_bot() {
 			$bytes_read = $fibs_socket->sysread( $char, 1 );
 			if ( $char ne "\n" ) {
 				$string .= $char if ($bytes_read);
-				print $string . "\n";
 			} else {
 				$pos = index($string, "Try one of");
 				if ( $pos ne -1 ) {
