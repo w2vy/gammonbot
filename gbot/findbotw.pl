@@ -162,8 +162,8 @@ sub who_bot() {
 	my @args = @_;
 	my $fibs_socket = $args[0];
 	my $command = $args[1];
-	my @bots = $args[2];
-	my $select          = IO::Select->new($fibs_socket);
+	my @bots = @_[2..$#_];
+	my $select = IO::Select->new($fibs_socket);
 	my $names;
 	my @names;
 
@@ -180,7 +180,6 @@ sub who_bot() {
 				$pos = index($string, "Try one of");
 				if ( $pos ne -1 ) {
 					$names = substr($string, $pos+12);
-					print $names + "\n";
 					@names = split(/, /, $names);
 					foreach ( @bots ) {
 						if (not($_ ~~ @names)) {
