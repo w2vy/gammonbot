@@ -30,6 +30,7 @@ require "botlist.pl";
 
 sub main() {
 	my $gbot;
+	my $tries_left = 60;
 	# Connect to fibs.com.
 	#
 	our $lock_sock = &connect_to_botLock();
@@ -39,20 +40,29 @@ sub main() {
 	} else {
 		# Give the previous bot time to startup
 		sleep(2);
-		log_str("open socket\r\n");
-		$gbot = who_bot($lock_sock, @BOT_NAMES);
-		$lock_sock->close() if $lock_sock;
-		if (length($gbot)) {
-			log_str("Found Offline bot! " . $gbot . "\r\n");
-			print "\r\nFound Offline bot! " . $gbot . "\r\n";
-			open(FH, '>', "mybot.pl") or die $!;
-			print FH '$BOTID = "' . $gbot . '";' . "\r\n";
-			print FH '$BOTPASS = "' . $BOT_PASSWD . '";' . "\r\n";
-			close(FH);
-		} else {
-			log_str("No bot found\r\n");
-			sleep(15);
+		while (1) {
+			log_str("Look for bots\r\n");
+			$gbot = who_bot($lock_sock, @BOT_NAMES);
+			if (length($gbot)) {
+				log_str("Found Offline bot! " . $gbot . "\r\n");
+				print "\r\nFound Offline bot! " . $gbot . "\r\n";
+				open(FH, '>', "mybot.pl") or die $!;
+				print FH '$BOTID = "' . $gbot . '";' . "\r\n";
+				print FH '$BOTPASS = "' . $BOT_PASSWD . '";' . "\r\n";
+				close(FH);
+				last;
+			} else {
+				log_str("No bot found\r\n");
+				print "No Bot found, tries left " . $tries_left . "\n";
+				$tries_left = $tries_left - 1;
+				if ($tries_left > 0) {
+					sleep(60);
+				} else {
+					last; # Give up, let someone else try
+				}
+			}
 		}
+		$lock_sock->close() if $lock_sock;
 	}
 	exit;
 }
