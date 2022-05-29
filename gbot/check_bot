@@ -10,6 +10,8 @@ then
       if [[ ! -e .bot_running ]]
       then
          rm -f mybot.pl
+         rm -f find_bot.log
+         touch find_bot.log
          perl findbotw.pl
          if [[ -e mybot.pl ]]
          then

@@ -19,6 +19,12 @@ our $LOCK_PASSWD;
 our @BOT_NAMES = [];
 our $BOT_PASSWD;
 
+sub log_str {
+	open(FH, '>>', "find_bot.log") or die $!;
+	print FH @_;
+	close(FH);
+
+}
 # use the next to change any defaults, also bot strentgh file
 require "botlist.pl";
 
@@ -29,24 +35,25 @@ sub main() {
 	our $lock_sock = &connect_to_botLock();
 
 	if (not $lock_sock) {
-		print "null socket\r\n";
+		log_str("null socket\r\n");
 	} else {
 		# Give the previous bot time to startup
-		sleep(5);
-		print "open socket\r\n";
-		$gbot = who_bot($lock_sock, "who GammonBo\r", @BOT_NAMES);
+		sleep(2);
+		log_str("open socket\r\n");
+		$gbot = who_bot3($lock_sock, "who GammonBo\r", @BOT_NAMES);
 		if (length($gbot) == 0) {
-			$gbot = who_bot($lock_sock, "who BlunderBo\r", @BOT_NAMES);
+			$gbot = who_bot3($lock_sock, "who BlunderBo\r", @BOT_NAMES);
 		}
 		$lock_sock->close() if $lock_sock;
 		if (length($gbot)) {
-			print "Found Offline bot! " . $gbot . "\r\n";
+			log_str("Found Offline bot! " . $gbot . "\r\n");
+			print "\r\nFound Offline bot! " . $gbot . "\r\n";
 			open(FH, '>', "mybot.pl") or die $!;
 			print FH '$BOTID = "' . $gbot . '";' . "\r\n";
 			print FH '$BOTPASS = "' . $BOT_PASSWD . '";' . "\r\n";
 			close(FH);
 		} else {
-			print "No bot found\r\n";
+			log_str("No bot found\r\n");
 			sleep(15);
 		}
 	}
@@ -63,7 +70,8 @@ sub connect_to_botLock() {
 		PeerAddr => $FIBS_SERVER_HOST,
 		PeerPort => $FIBS_SERVER_PORT,
 		Proto    => 'tcp',
-		Blocking => 0
+		Blocking => 0,
+		Timeout  => 2
 	) or die "Connect to $FIBS_SERVER_HOST:$FIBS_SERVER_PORT failed: $!\n";
 
 	my $char            = ' ';
@@ -82,11 +90,11 @@ sub connect_to_botLock() {
 				$string .= $char if ($bytes_read);
 			}
 			else {
-				print "from fibs login: " . $string . "\n";
+				log_str("from fibs login: " . $string . "\n");
 			}
 			if ( $string eq 'login: ' ) {
 				$isLooking = 0;
-				print "to fibs login: " . $LOCK_NAME . "\r\n";
+				log_str("to fibs login: " . $LOCK_NAME . "\r\n");
 				$fibs_socket->syswrite( $LOCK_NAME . "\r" );
 			}
 		}
@@ -94,7 +102,7 @@ sub connect_to_botLock() {
 		$char   = ' ';
 	}
 	$isLooking = 1;
-	print "Send username, look for password:\r\n";
+	log_str("Send username, look for password:\r\n");
 	while ( $isLooking ) {
 		while ( $char ne "\n" and $isLooking ) {
 			$select->can_read(1);
@@ -103,25 +111,25 @@ sub connect_to_botLock() {
 				$string .= $char if ($bytes_read);
 			}
 			else {
-				print "from fibs login: " . $string . "\n";
+				log_str("from fibs login: " . $string . "\n");
 			}
 			if ( $string eq 'password: ' ) {
 				$isLooking = 0;
-				print "to fibs password\r\n";
+				log_str("to fibs password\r\n");
 				$fibs_socket->syswrite( $LOCK_PASSWD . "\r" );
 				$result_ok = 1;
 			}
 			$pos = index($string, 'Warning: You are already logged in.');
 			if ( $pos > 0 ) {
 				$isLooking = 0;
-				print "Already logged in\r\n";
+				log_str("Already logged in\r\n");
 			}
 		}
 		$string = '';
 		$char   = ' ';
 	}
 	$isLooking = 1;
-	print "after password...\r\n";
+	log_str("after password...\r\n");
 	while ( $isLooking and $result_ok ) {
 		while ( $char ne "\n" and $isLooking ) {
 			$select->can_read(1);
@@ -139,7 +147,7 @@ sub connect_to_botLock() {
 		$string = '';
 		$char   = ' ';
 	}
-	print "exit fibs login: " . $string . "\r\n";
+	log_str("exit fibs login: " . $string . "\r\n");
 	if ( not $result_ok ) {
 		$fibs_socket->close();
 		$fibs_socket = 0;
@@ -167,7 +175,7 @@ sub who_bot() {
 	my $names;
 	my @names;
 
-	print "Command " . $command . "\n";
+	log_str("Command " . $command . "\n");
 	$fibs_socket->syswrite($command);
 
 	while ( $isLooking ) {
@@ -176,6 +184,7 @@ sub who_bot() {
 			$bytes_read = $fibs_socket->sysread( $char, 1 );
 			if ( $char ne "\n" ) {
 				$string .= $char if ($bytes_read);
+				#print $string . "\n";
 			} else {
 				$pos = index($string, "Try one of");
 				if ( $pos ne -1 ) {
@@ -187,11 +196,116 @@ sub who_bot() {
 							last;
 						}
 					}
-					print "Found " . $botname . "\n";
+					log_str("Found " . $botname . "\n");
 					$isLooking = 0;
 				}
 			}
 		}
 	}
 	return $botname;
+}
+
+# Connect to the fibs.com server and find a bot that is not online
+# Return the bot name to use
+# Ambiguous name: Try one of: GammonBot_V, GammonBot_II, GammonBot, GammonBot_III, GammonBot_IX, GammonBot_VII, GammonBot_XI, GammonBot_XIII, GammonBot_IV, GammonBot_X, GammonBot_VI, GammonBot_XV, GammonBot_XIV, GammonBot_VIII, GammonBot_XII
+sub who_bot2() {
+	my $chars            = ' ';
+	my $string          = '';
+	my $isLooking       = 1;
+	my $bytes_read;
+	my $result_ok = 0;
+	my $pos;
+	my $bot;
+	my $botname="";
+	my @args = @_;
+	my $fibs_socket = $args[0];
+	my $command = $args[1];
+	my @bots = @_[2..$#_];
+	my $names;
+	my @names;
+
+	# setup the timeouts
+	$fibs_socket->setsockopt(SOL_SOCKET, SO_RCVTIMEO, pack('l!l!', 1, 0))
+    or die "setsockopt: $!";
+	log_str("Command " . $command . "\n");
+	$fibs_socket->send($command);
+
+	while ( $isLooking ) {
+		$fibs_socket->recv( $chars, 1024 );
+		if ( $chars ) {
+			$string .= $chars;
+			log_str("Found: ". $string . "\n");
+		}
+		if (index($string, "\n") ne -1 ) {
+			$pos = index($string, "Try one of");
+			if ( $pos ne -1 ) {
+				$names = substr($string, $pos+12);
+				@names = split(/, /, $names);
+				foreach ( @bots ) {
+					if (not($_ ~~ @names)) {
+						$botname = $_;
+						last;
+					}
+				}
+				log_str("Found " . $botname . "\n");
+				$isLooking = 0;
+			} else {
+				log_str("ELON but no match on " . $string . "\n");
+				$string = "";
+			}
+		}
+	}
+	return $botname;
+}
+
+# Connect to the fibs.com server and find a bot that is not online
+# Return the bot name to use
+# Ambiguous name: Try one of: GammonBot_V, GammonBot_II, GammonBot, GammonBot_III, GammonBot_IX, GammonBot_VII, GammonBot_XI, GammonBot_XIII, GammonBot_IV, GammonBot_X, GammonBot_VI, GammonBot_XV, GammonBot_XIV, GammonBot_VIII, GammonBot_XII
+sub who_bot3() {
+	my $chars            = ' ';
+	my $string          = '';
+	my $isLooking       = 1;
+	my $bytes_read;
+	my $result_ok = 0;
+	my $pos;
+	my $bot;
+	my $botname="";
+	my @args = @_;
+	my $fibs_socket = $args[0];
+	my $command = $args[1];
+	my @bots = @_[2..$#_];
+	my $names;
+	my @names;
+
+	foreach ( @bots ) {
+		$botname = $_;
+		$isLooking = 1;
+		$string = "";
+		$command = "who " . $botname . "\r";
+		log_str("Command " . $command . "\n");
+		print "Command " . $command . "\n";
+		$fibs_socket->send($command);
+		sleep(1);
+
+		while ( $isLooking ) {
+			$fibs_socket->recv( $chars, 1024 );
+			if ( $chars ) {
+				$string .= $chars;
+				log_str("Found: ". $string . "\n");
+				#print "Found: ". $string . "\n";
+			}
+			if (index($string, "\n") ne -1 ) {
+				print "Found: ". $string . "\n";
+				$pos = index($string, "There is no one called");
+				if ( $pos ne -1 ) {
+					log_str("Found " . $botname . "\n");
+					return $botname;
+				} else {
+					log_str("ELON but no match on " . $string . "\n");
+				}
+				$isLooking = 0;
+			}
+		}
+	}
+	return "";
 }
