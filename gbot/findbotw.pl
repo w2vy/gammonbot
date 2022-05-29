@@ -40,10 +40,7 @@ sub main() {
 		# Give the previous bot time to startup
 		sleep(2);
 		log_str("open socket\r\n");
-		$gbot = who_bot3($lock_sock, "who GammonBo\r", @BOT_NAMES);
-		if (length($gbot) == 0) {
-			$gbot = who_bot3($lock_sock, "who BlunderBo\r", @BOT_NAMES);
-		}
+		$gbot = who_bot($lock_sock, @BOT_NAMES);
 		$lock_sock->close() if $lock_sock;
 		if (length($gbot)) {
 			log_str("Found Offline bot! " . $gbot . "\r\n");
@@ -159,123 +156,15 @@ sub connect_to_botLock() {
 # Return the bot name to use
 # Ambiguous name: Try one of: GammonBot_V, GammonBot_II, GammonBot, GammonBot_III, GammonBot_IX, GammonBot_VII, GammonBot_XI, GammonBot_XIII, GammonBot_IV, GammonBot_X, GammonBot_VI, GammonBot_XV, GammonBot_XIV, GammonBot_VIII, GammonBot_XII
 sub who_bot() {
-	my $char            = ' ';
-	my $string          = '';
-	my $isLooking       = 1;
-	my $bytes_read;
-	my $result_ok = 0;
-	my $pos;
-	my $bot;
-	my $botname="";
-	my @args = @_;
-	my $fibs_socket = $args[0];
-	my $command = $args[1];
-	my @bots = @_[2..$#_];
-	my $select = IO::Select->new($fibs_socket);
-	my $names;
-	my @names;
-
-	log_str("Command " . $command . "\n");
-	$fibs_socket->syswrite($command);
-
-	while ( $isLooking ) {
-		while ( $char ne "\n"  and $isLooking) {
-			$select->can_read(1);
-			$bytes_read = $fibs_socket->sysread( $char, 1 );
-			if ( $char ne "\n" ) {
-				$string .= $char if ($bytes_read);
-				#print $string . "\n";
-			} else {
-				$pos = index($string, "Try one of");
-				if ( $pos ne -1 ) {
-					$names = substr($string, $pos+12);
-					@names = split(/, /, $names);
-					foreach ( @bots ) {
-						if (not($_ ~~ @names)) {
-							$botname = $_;
-							last;
-						}
-					}
-					log_str("Found " . $botname . "\n");
-					$isLooking = 0;
-				}
-			}
-		}
-	}
-	return $botname;
-}
-
-# Connect to the fibs.com server and find a bot that is not online
-# Return the bot name to use
-# Ambiguous name: Try one of: GammonBot_V, GammonBot_II, GammonBot, GammonBot_III, GammonBot_IX, GammonBot_VII, GammonBot_XI, GammonBot_XIII, GammonBot_IV, GammonBot_X, GammonBot_VI, GammonBot_XV, GammonBot_XIV, GammonBot_VIII, GammonBot_XII
-sub who_bot2() {
 	my $chars            = ' ';
 	my $string          = '';
 	my $isLooking       = 1;
-	my $bytes_read;
-	my $result_ok = 0;
 	my $pos;
-	my $bot;
 	my $botname="";
+	my $command = "";
 	my @args = @_;
 	my $fibs_socket = $args[0];
-	my $command = $args[1];
-	my @bots = @_[2..$#_];
-	my $names;
-	my @names;
-
-	# setup the timeouts
-	$fibs_socket->setsockopt(SOL_SOCKET, SO_RCVTIMEO, pack('l!l!', 1, 0))
-    or die "setsockopt: $!";
-	log_str("Command " . $command . "\n");
-	$fibs_socket->send($command);
-
-	while ( $isLooking ) {
-		$fibs_socket->recv( $chars, 1024 );
-		if ( $chars ) {
-			$string .= $chars;
-			log_str("Found: ". $string . "\n");
-		}
-		if (index($string, "\n") ne -1 ) {
-			$pos = index($string, "Try one of");
-			if ( $pos ne -1 ) {
-				$names = substr($string, $pos+12);
-				@names = split(/, /, $names);
-				foreach ( @bots ) {
-					if (not($_ ~~ @names)) {
-						$botname = $_;
-						last;
-					}
-				}
-				log_str("Found " . $botname . "\n");
-				$isLooking = 0;
-			} else {
-				log_str("ELON but no match on " . $string . "\n");
-				$string = "";
-			}
-		}
-	}
-	return $botname;
-}
-
-# Connect to the fibs.com server and find a bot that is not online
-# Return the bot name to use
-# Ambiguous name: Try one of: GammonBot_V, GammonBot_II, GammonBot, GammonBot_III, GammonBot_IX, GammonBot_VII, GammonBot_XI, GammonBot_XIII, GammonBot_IV, GammonBot_X, GammonBot_VI, GammonBot_XV, GammonBot_XIV, GammonBot_VIII, GammonBot_XII
-sub who_bot3() {
-	my $chars            = ' ';
-	my $string          = '';
-	my $isLooking       = 1;
-	my $bytes_read;
-	my $result_ok = 0;
-	my $pos;
-	my $bot;
-	my $botname="";
-	my @args = @_;
-	my $fibs_socket = $args[0];
-	my $command = $args[1];
-	my @bots = @_[2..$#_];
-	my $names;
-	my @names;
+	my @bots = @_[1..$#_];
 
 	foreach ( @bots ) {
 		$botname = $_;
