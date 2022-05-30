@@ -52,8 +52,8 @@ sub main() {
 				close(FH);
 				last;
 			} else {
-				log_str("No bot found\r\n");
 				print "No Bot found, tries left " . $tries_left . "\n";
+				log_str("No Bot found, tries left " . $tries_left . "\n");
 				$tries_left = $tries_left - 1;
 				if ($tries_left > 0) {
 					sleep(60);
@@ -182,7 +182,7 @@ sub who_bot() {
 		$string = "";
 		$command = "who " . $botname . "\r";
 		log_str("Command " . $command . "\n");
-		print "Command " . $command . "\n";
+		#print "Command " . $command . "\n";
 		$fibs_socket->send($command);
 		sleep(1);
 
@@ -190,17 +190,15 @@ sub who_bot() {
 			$fibs_socket->recv( $chars, 1024 );
 			if ( $chars ) {
 				$string .= $chars;
-				log_str("Found: ". $string . "\n");
+				#log_str("Found: ". $string . "\n");
 				#print "Found: ". $string . "\n";
 			}
 			if (index($string, "\n") ne -1 ) {
-				print "Found: ". $string . "\n";
+				#print "Found: ". $string . "\n";
 				$pos = index($string, "There is no one called");
 				if ( $pos ne -1 ) {
 					log_str("Found " . $botname . "\n");
 					return $botname;
-				} else {
-					log_str("ELON but no match on " . $string . "\n");
 				}
 				$isLooking = 0;
 			}
