@@ -636,8 +636,10 @@ sub checkFibsKeepalive() {
 
 sub checkHostCPUandMemoryRessources() {
 	return
-	  if ( &my_memory_usage() < $mem_limit
-		&& &get_load_average() < $load_limit );
+	  if ( &my_memory_usage() < $mem_limit);
+
+#	  if ( &my_memory_usage() < $mem_limit
+#		&& &get_load_average() < $load_limit );
 
 	my $exitmsg =
 	    "Emergency Exit $BOTID Mem "
