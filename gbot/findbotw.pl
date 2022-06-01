@@ -180,7 +180,7 @@ sub who_bot() {
 		$botname = $_;
 		$isLooking = 1;
 		$string = "";
-		$command = "who " . $botname . "\r";
+		$command = "rawwho " . $botname . "\r";
 		log_str("Command " . $command . "\n");
 		#print "Command " . $command . "\n";
 		$fibs_socket->send($command);
@@ -199,6 +199,13 @@ sub who_bot() {
 				if ( $pos ne -1 ) {
 					log_str("Found " . $botname . "\n");
 					return $botname;
+				} else { # No Error, make sure we actually match our bot
+					$pos = index($string, $botname . " ");
+					if ( $pos eq -1 ) {
+						log_str("Found: " . $botname . "\n");
+						#print "Found " . $botname . "Not in " . $string . "\n";
+						return $botname;
+					}
 				}
 				$isLooking = 0;
 			}
