@@ -41,6 +41,7 @@ sub main() {
 		# Give the previous bot time to startup
 		sleep(2);
 		while (1) {
+			require "botlist.pl";
 			log_str("Look for bots\r\n");
 			$gbot = who_bot($lock_sock, @BOT_NAMES);
 			if (length($gbot)) {
