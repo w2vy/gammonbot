@@ -1,15 +1,17 @@
 #!/bin/sh
 
-echo Version 1.0 6/1/2022 Vault $VAULT_DNS Port $FLUX_PORT
+echo Version 1.1 8/24/2022 Vault $VAULT_DNS Port $FLUX_PORT
 
-#rm -f FluxVault.py
 rm -f botlist.pl
 
-#wget https://raw.githubusercontent.com/RunOnFlux/FluxVault/main/FluxVault.py
-#chmod +x FluxVault.py
+git clone https://github.com/RunOnFlux/FluxVault.git
+cd FluxVault
+git checkout python_class
+cd ..
+pip3 install ./FluxVault
 
 (echo "* * * * * /home/gammonbot/cron_bot" ; crontab -l)| crontab -
 
 crond
 
-python3 FluxVault.py Node --port $FLUX_PORT --vault $VAULT_DNS botlist.pl
+python3 gbot_node.py
