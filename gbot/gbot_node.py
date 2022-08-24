@@ -7,8 +7,7 @@ import os
 import sys
 from fluxvault import FluxNode
 
-#VAULT_NAME = "home.moulton.us"                    # EDIT ME
-VAULT_NAME = "192.168.8.13"                    # EDIT ME
+VAULT_NAME = "home.moulton.us"                    # EDIT ME
 BOOTFILES = ["botlist.pl"]    # EDIT ME
 FILE_DIR = "/home/gammonbot/"                     # EDIT ME
 VAULT_PORT = 34321                          # EDIT ME

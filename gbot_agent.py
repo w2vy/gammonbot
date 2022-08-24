@@ -6,8 +6,7 @@ import requests
 from fluxvault import FluxAgent
 from datetime import datetime
 
-#VAULT_NAME = "home.moulton.us"                    # EDIT ME
-VAULT_NAME = "192.168.8.13"                    # EDIT ME
+VAULT_NAME = "home.moulton.us"                    # EDIT ME
 FILE_DIR = "/home/tom/Docker/gbot-docker/test/"   # EDIT ME
 VAULT_PORT = 34321                                # EDIT ME
 APP_NAME = "gammonbot"                            # EDIT ME
