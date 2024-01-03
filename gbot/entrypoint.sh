@@ -14,14 +14,12 @@ fi
 
 if [[ -f "botlist.pl" ]]; then
   echo "\$LOCK_PASSWD=\"$LOCK_PASSWD\";" >> botlist.pl
-  echo "\$BOT_PASSWD=\"$BOT_PASSWD\";" >> botlist.pl
+  echo "\$BOTPASS=\"$BOT_PASSWD\";" >> config.defaults.pl
+  echo "return 1;" >> config.defaults.pl
 else
   echo "botlist.pl not located"
   exit 13
 fi
-
-tail botlist.pl
-sleep 3
 
 /home/gammonbot/check_bot
 

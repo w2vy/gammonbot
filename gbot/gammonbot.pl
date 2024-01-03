@@ -36,15 +36,15 @@ use IO::Select;
 # used to set the strength of the bot
 #######################################################################
 
-#if ( $#ARGV < 1 ) {
-#	printf "ERROR NOT ENOUGH ARGUMENTS!!! ( $#ARGV )\n";
-#	printf "Synopsis: gammonbot.pl BOT_ID BOT_PASSWORD\n";
-#	exit;
-#}
+if ( $#ARGV < 0 ) {
+	printf "ERROR NOT ENOUGH ARGUMENTS!!! ( $#ARGV ) $ARGV[0] \n";
+	printf "Synopsis: gammonbot.pl BOT_ID BOT_PASSWORD\n";
+	exit;
+}
 open( STDERR, ">&STDOUT" ) || die "Can't dup stdout";
 
 our $BOTID   = $ARGV[0];
-our $BOTPASS = $ARGV[1];
+our $BOTPASS;
 
 # from config
 our $PATH_TO_GNUBG;
@@ -83,7 +83,7 @@ $mat_log = 0;
 require "config.defaults.pl";
 
 # The following gets BOTID and BOTPASS from findbot.pl created mybot.pl
-require "mybot.pl";
+#require "mybot.pl";
 
 # use the next to change any defaults, also bot strentgh file
 require "config.pl";
@@ -2006,12 +2006,12 @@ m/^       \d\.\d\d\d \d\.\d\d\d \d\.\d\d\d - (\d\.\d\d\d) (\d\.\d\d\d) (\d\.\d\d
 #
 sub handleCubeAction($$) {
 	my ( $command, $opponent_action ) = @_;
-	print "DEBUG handleCubeAction board[BD_DOUBLED]="
+	do_log_line( "DEBUG handleCubeAction board[BD_DOUBLED]="
 	  . $board[BD_DOUBLED]
 	  . " command='"
 	  . $command
 	  . "' opponent_action='"
-	  . $opponent_action . "'\n";
+	  . $opponent_action );
 
 	# Case 1: We have not been doubled, i.e. we now double ourselves (or not)
 	#
@@ -2064,7 +2064,7 @@ sub handleCubeAction($$) {
 }
 
 sub handleDeadCube() {
-	print "DEBUG handleDeadCube board[BD_DOUBLED]=" . $board[BD_DOUBLED] . "\n";
+	do_log_line ( "DEBUG handleDeadCube board[BD_DOUBLED]=" . $board[BD_DOUBLED] );
 
 	&toFibs( FIBSCMD_KIBITZ,
 "Cubing higher than match length will not earn you extra points. I will therefore accept this dead cube."

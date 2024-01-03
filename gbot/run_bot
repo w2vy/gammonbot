@@ -1,0 +1,16 @@
+
+if [[ -z "$1" ]]; then
+    echo "Missing BOT Directory"
+    exit 100
+fi
+if [[ -z "$2" ]]; then
+    echo "Missing BOTID"
+    exit 101
+fi
+rm -f $1/.need_bot
+# We have a botid to use
+touch $1/.bot_running
+perl gammonbot.pl $2
+rm $1/.bot_running
+echo "Bot exited" > status.txt
+echo "Bot $1 $2 Exited!"

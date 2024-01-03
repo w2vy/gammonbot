@@ -20,9 +20,9 @@ our @BOT_NAMES = [];
 our $BOT_PASSWD;
 
 sub log_str {
-	open(FH, '>>', "find_bot.log") or die $!;
-	print FH @_;
-	close(FH);
+	#open(FH, '>>', "find_bot.log") or die $!;
+	#print FH @_;
+	#close(FH);
 
 }
 # use the next to change any defaults, also bot strentgh file
@@ -46,14 +46,15 @@ sub main() {
 			$gbot = who_bot($lock_sock, @BOT_NAMES);
 			if (length($gbot)) {
 				log_str("Found Offline bot! " . $gbot . "\r\n");
-				print "\r\nFound Offline bot! " . $gbot . "\r\n";
-				open(FH, '>', "mybot.pl") or die $!;
-				print FH '$BOTID = "' . $gbot . '";' . "\r\n";
-				print FH '$BOTPASS = "' . $BOT_PASSWD . '";' . "\r\n";
-				close(FH);
+				#print "\r\nFound Offline bot! " . $gbot . "\r\n";
+				print $gbot;
+				#open(FH, '>', "mybot.pl") or die $!;
+				#print FH '$BOTID = "' . $gbot . '";' . "\r\n";
+				#print FH '$BOTPASS = "' . $BOT_PASSWD . '";' . "\r\n";
+				#close(FH);
 				last;
 			} else {
-				print "No Bot found, tries left " . $tries_left . "\n";
+				#print "No Bot found, tries left " . $tries_left . "\n";
 				log_str("No Bot found, tries left " . $tries_left . "\n");
 				$tries_left = $tries_left - 1;
 				if ($tries_left > 0) {

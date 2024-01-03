@@ -1,33 +1,35 @@
 #~/usr/bin/bash
 
+rm -f */.bot_running
+
 while :
 do
    if [[ -r botlist.pl ]] 
    then
       # We have our configuration
-      if [[ ! -e .bot_running ]]
-      then
-         rm -f mybot.pl
-         rm -f find_bot.log
-         touch find_bot.log
-         perl findbotw.pl
-         if [[ -e mybot.pl ]]
+      for bot in "bot1" "bot2" "bot3" "bot4" "bot5" "bot6" "bot7"
+      do
+         if [ ! -d "$bot" ]; then
+            echo "make dir $bot"
+            mkdir $bot
+         fi
+         if [[ ! -e $bot/.bot_running ]]
          then
-            rm -f .need_bot
-            echo "Start Bot" > status.txt
-            # We have a botid to use
-            touch .bot_running
-            perl gammonbot.pl
-            rm .bot_running
-            echo "Bot exited" > status.txt
-         else
-            if [[ ! -e .need_bot ]]
-            then
-               touch .need_bot
-               echo "Need Bot ID" > status.txt
+            NEWBOT=`perl findbotw.pl`
+            if [[ -n "$NEWBOT" ]]; then
+               echo "Found new Bot $NEWBOT"
+               echo "Start Bot $bot $NEWBOT"
+               echo "Start Bot" > status.txt
+               ./run_bot $bot $NEWBOT &
+            else
+               if [[ ! -e $bot/.need_bot ]]
+               then
+                  touch $bot/.need_bot
+                  echo "Need Bot ID" > status.txt
+               fi
             fi
          fi
-      fi
+      done
    else
       echo "Not botlist.pl file!"
       exit 99
