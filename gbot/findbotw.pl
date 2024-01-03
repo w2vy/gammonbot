@@ -30,7 +30,7 @@ require "botlist.pl";
 
 sub main() {
 	my $gbot;
-	my $tries_left = 60;
+	my $tries_left = 50;
 	# Connect to fibs.com.
 	#
 	our $lock_sock = &connect_to_botLock();

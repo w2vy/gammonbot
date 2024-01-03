@@ -108,13 +108,14 @@ RUN set -ex && \
 #RUN set -ex && \
 #     apk add --no-cache python3
 # Install python/pip
-ENV PYTHONUNBUFFERED=1
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-RUN python3 -m ensurepip
-RUN pip3 install --no-cache --upgrade pip setuptools
+#ENV PYTHONUNBUFFERED=1
+#RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+#RUN python3 -m ensurepip
+#RUN pip3 install --no-cache --upgrade pip setuptools
+
 RUN apk add gcc g++ make libffi-dev openssl-dev git
-RUN pip3 install pycryptodome
-RUN pip3 install requests
+#RUN pip3 install pycryptodome
+#RUN pip3 install requests
 
 # Copy our scripts
 WORKDIR ${GBOT_INSTALL_DIRECTORY}

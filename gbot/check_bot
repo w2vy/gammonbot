@@ -1,9 +1,7 @@
 #~/usr/bin/bash
 
-if [[ ! -e .check_bot ]]
-then
-   touch .check_bot
-
+while :
+do
    if [[ -r botlist.pl ]] 
    then
       # We have our configuration
@@ -30,6 +28,8 @@ then
             fi
          fi
       fi
+   else
+      echo "Not botlist.pl file!"
+      exit 99
    fi
-   rm -f .check_bot
-fi
+done

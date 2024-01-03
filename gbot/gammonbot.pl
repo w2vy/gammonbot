@@ -437,7 +437,7 @@ sub connect_to_fibs() {
 				$string .= $char if ($bytes_read);
 			}
 			else {
-				print "from fibs login: " . $string . "\n";
+				do_log_line("from fibs login: " . $string);
 			}
 			if ( $string eq 'login: ' ) {
 				$isAuthenticated = 1;
