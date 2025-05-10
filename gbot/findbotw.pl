@@ -12,6 +12,8 @@ use IO::Select;
 use FindBin qw( $RealBin );
 use lib $RealBin;
 
+my $day = (localtime)[6];
+
 my $FIBS_SERVER_HOST = "fibs.com";
 my $FIBS_SERVER_PORT = 4321;
 our $LOCK_NAME;
@@ -41,7 +43,8 @@ sub main() {
 		# Give the previous bot time to startup
 		sleep(2);
 		while (1) {
-			require "botlist.pl";
+			log_str("Bots for day $day\n");
+			require "botlist-$day.pl";
 			log_str("Look for bots\r\n");
 			$gbot = who_bot($lock_sock, @BOT_NAMES);
 			if (length($gbot)) {
