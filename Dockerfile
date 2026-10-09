@@ -35,7 +35,7 @@ RUN set -ex && \
     apk add --no-cache glib-dev 
 
 # Download sources
-RUN cvs -z7 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/gnubg co gnubg
+RUN cvs -z7 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/gnubg co -D 2026-10-09 gnubg
 COPY ${GNUBG_PATCH_FILE} .
 RUN patch -s -p0 < gnubg.patch
 WORKDIR ${GNUBG_COMPILE_DIRECTORY}

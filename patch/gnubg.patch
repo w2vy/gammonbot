@@ -1,14 +1,14 @@
 diff -ruN gnubg_orig/configure.ac gnubg/configure.ac
 --- gnubg_orig/configure.ac	2021-10-27 16:56:03.000000000 +0200
 +++ gnubg/configure.ac	2022-02-20 20:50:12.032706075 +0100
-@@ -621,7 +621,7 @@
+@@ -590,7 +590,7 @@
  dnl -O2             1:23
  dnl -O3             1:14
  dnl -O3 -ffast-math 1:11
--AM_CFLAGS="-O3 $AM_CFLAGS"
-+AM_CFLAGS="-Ofast $AM_CFLAGS"
+-AM_CFLAGS="$AM_CFLAGS -g -O3"
++AM_CFLAGS="$AM_CFLAGS -Ofast"
  if test x"$GCC" = "xyes"; then
-     AM_CFLAGS="-ffast-math $AM_CFLAGS"
+     AM_CFLAGS="$AM_CFLAGS -ffast-math"
  fi
 diff -ruN gnubg_orig/drawboard.c gnubg/drawboard.c
 --- gnubg_orig/drawboard.c	2021-09-20 23:08:25.000000000 +0200
