@@ -34,7 +34,7 @@ if [ -z "${LOCK_PASSWD}" ]; then
   exit 11
 fi
 
-if [ -f "botlist.pl" ]; then
+if [ -f "${GBOT_DIR}/botlist.pl" ]; then
   printf "\$LOCK_PASSWD='${LOCK_PASSWD}';\nreturn 1;\n" >> "${GBOT_DIR}/botlist.pl"
 else
   echo "botlist.pl not located"
