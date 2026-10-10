@@ -1,0 +1,3 @@
+*.py text eol=lf
+gbot/** text eol=lf
+patch/** text eol=lf
