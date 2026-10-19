@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo Version 2.0 1/2/2023 No Vault
+echo "Image w2vy/gammonbot:${GBOT_VERSION} commit ${GBOT_COMMIT} built ${GBOT_BUILT}"
 
 if [[ -z "${LOCK_PASSWD}" ]]; then
   echo "LOCK_PASSWD Not defined in app config"

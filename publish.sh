@@ -12,12 +12,17 @@ LATEST=no
 [[ ${2:-} == --latest ]] && LATEST=yes
 [[ $TAG == latest ]] && { echo "Give a real tag; use --latest to move :latest."; exit 1; }
 SHA=$(git rev-parse --short HEAD)
+COMMIT=$SHA
 DIRTY=$(git status --porcelain -- gbot Dockerfile patch | wc -l)
+[[ $DIRTY -gt 0 ]] && COMMIT+=+dirty
 
 echo "Building $IMAGE:$TAG from $(git branch --show-current)@$SHA ($DIRTY uncommitted files in gbot/Dockerfile/patch)"
 docker build --platform=linux/amd64 \
     --label org.opencontainers.image.revision="$SHA" \
     --label gammonbot.uncommitted="$DIRTY" \
+    --build-arg GBOT_VERSION="$TAG" \
+    --build-arg GBOT_COMMIT="$COMMIT" \
+    --build-arg GBOT_BUILT="$(date -u +%Y-%m-%dT%H:%MZ)" \
     -t "$IMAGE:$TAG" .
 
 [[ $LATEST == yes ]] && targets="$IMAGE:$TAG AND $IMAGE:latest" || targets="$IMAGE:$TAG only (:latest unchanged)"
