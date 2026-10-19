@@ -12,7 +12,8 @@ use IO::Select;
 use FindBin qw( $RealBin );
 use lib $RealBin;
 
-my $day = (localtime)[6];
+# my $day = (localtime)[6];
+my $day = "0";
 
 my $FIBS_SERVER_HOST = "fibs.com";
 my $FIBS_SERVER_PORT = 4321;
@@ -41,7 +42,7 @@ sub main() {
 		log_str("null socket\r\n");
 	} else {
 		# Give the previous bot time to startup
-		sleep(2);
+		sleep(20);
 		while (1) {
 			log_str("Bots for day $day\n");
 			require "botlist-$day.pl";
@@ -61,7 +62,7 @@ sub main() {
 				log_str("No Bot found, tries left " . $tries_left . "\n");
 				$tries_left = $tries_left - 1;
 				if ($tries_left > 0) {
-					sleep(60);
+					sleep(600);
 				} else {
 					last; # Give up, let someone else try
 				}
@@ -189,7 +190,7 @@ sub who_bot() {
 		log_str("Command " . $command . "\n");
 		#print "Command " . $command . "\n";
 		$fibs_socket->send($command);
-		sleep(1);
+		sleep(10);
 
 		while ( $isLooking ) {
 			$fibs_socket->recv( $chars, 1024 );

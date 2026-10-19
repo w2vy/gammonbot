@@ -16,9 +16,13 @@ $DEBUG = 0;
 
 @BOT_NAMES = qw(
 BlunderBot_X
+BlunderBot_III
 BlunderBot_II
+BlunderBot_V
 BlunderBot_IX
 BlunderBot
+GammonBot
+GammonBot_II
 GammonBot_IV
 GammonBot_XI
 GammonBot_XVIII
