@@ -98,4 +98,10 @@ RUN set -ex && \
 COPY --from=builder_gnubg ${GNUBG_INSTALL_DIRECTORY} ${GNUBG_INSTALL_DIRECTORY}
 COPY ./gbot/* ${GBOT_INSTALL_DIRECTORY}
 
+# Version shown in the console log at startup (set by publish.sh)
+ARG GBOT_VERSION=dev
+ARG GBOT_COMMIT=unknown
+ARG GBOT_BUILT=unknown
+ENV GBOT_VERSION=${GBOT_VERSION} GBOT_COMMIT=${GBOT_COMMIT} GBOT_BUILT=${GBOT_BUILT}
+
 CMD ["/home/gammonbot/entrypoint.sh"]

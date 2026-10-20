@@ -18,11 +18,13 @@
 	'Montecarlo' => 1,
 # bots I see online for 2024
 	'udacity_capstone' => 1,
-	'CamlBot' => 1,
-	'CamlBot_oneply' => 1,
-	'CamlBot_twoply' => 1,
 	'wildbg' => 1,
 	'ziggy' => 1,
+# bots added 2026
+# Fredbot
+	'Fredbot' => 1,
+# Blotbot
+	'BlotBot' => 1,
 );
 
 #######################################################################
