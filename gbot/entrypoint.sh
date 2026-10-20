@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo Version 2.1 20261009 No Vault
+echo "Image w2vy/gammonbot:${GBOT_VERSION} commit ${GBOT_COMMIT} built ${GBOT_BUILT}"
 
 GBOT_DIR=/home/gammonbot/
 
@@ -34,11 +35,17 @@ if [ -z "${LOCK_PASSWD}" ]; then
   exit 11
 fi
 
-if [ -f "botlist.pl" ]; then
+if [ -f "${GBOT_DIR}/botlist.pl" ]; then
   printf "\$LOCK_PASSWD='${LOCK_PASSWD}';\nreturn 1;\n" >> "${GBOT_DIR}/botlist.pl"
 else
   echo "botlist.pl not located"
   exit 13
 fi
+
+for day in 0 1 2 3 4 5 6; do
+  if [ -f "${GBOT_DIR}/botlist-${day}.pl" ]; then
+    printf "\$LOCK_PASSWD='${LOCK_PASSWD}';\nreturn 1;\n" >> "${GBOT_DIR}/botlist-${day}.pl"
+  fi
+done
 
 ${GBOT_DIR}/check_bot
