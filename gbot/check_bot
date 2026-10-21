@@ -15,7 +15,8 @@ do
          fi
          if [[ ! -e $bot/.bot_running ]]
          then
-            NEWBOT=`perl findbotw.pl`
+            # findbotw.pl can hang on a dead FIBS socket; never let it block the other slots
+            NEWBOT=`timeout 600 perl findbotw.pl`
             if [[ -n "$NEWBOT" ]]; then
                echo "Found new Bot $NEWBOT"
                echo "Start Bot $bot $NEWBOT"
@@ -27,6 +28,9 @@ do
                   touch $bot/.need_bot
                   echo "Need Bot ID" > status.txt
                fi
+               # No free bot name right now; wait before asking FIBS again
+               sleep 600
+               break
             fi
          fi
       done
@@ -34,4 +38,5 @@ do
       echo "Not botlist.pl file!"
       exit 99
    fi
+   sleep 5
 done

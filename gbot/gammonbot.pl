@@ -429,10 +429,15 @@ sub connect_to_fibs() {
 	my $isAuthenticated = 0;
 	my $select          = IO::Select->new($fibs_socket);
 	my $bytes_read;
+	# Without these a dead connection spins here forever and the slot never frees
+	my $deadline        = time() + 60;
 	while ( !$isAuthenticated ) {
 		while ( $char ne "\n" ) {
+			die "No FIBS login prompt within 60 s\n" if ( time() > $deadline );
 			$select->can_read(1);
 			$bytes_read = $fibs_socket->sysread( $char, 1 );
+			die "FIBS closed the connection before login\n"
+			  if ( defined($bytes_read) and $bytes_read == 0 );
 			if ( $char ne "\n" ) {
 				$string .= $char if ($bytes_read);
 			}
