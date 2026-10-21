@@ -33,7 +33,11 @@ require "botlist.pl";
 
 sub main() {
 	my $gbot;
-	my $tries_left = 50;
+	# One try: check_bot waits and calls again, so a long wait here only blocks the other slots
+	my $tries_left = 1;
+	# Hard stop if FIBS stops answering; print nothing so check_bot starts no bot
+	$SIG{ALRM} = sub { log_str("Timed out\n"); exit; };
+	alarm(480);
 	# Connect to fibs.com.
 	#
 	our $lock_sock = &connect_to_botLock();
@@ -133,7 +137,7 @@ sub connect_to_botLock() {
 				$result_ok = 1;
 			}
 			$pos = index($string, 'Warning: You are already logged in.');
-			if ( $pos > 0 ) {
+			if ( $pos >= 0 ) {
 				$isLooking = 0;
 				log_str("Already logged in\r\n");
 			}
@@ -181,6 +185,9 @@ sub who_bot() {
 	my @args = @_;
 	my $fibs_socket = $args[0];
 	my @bots = @_[1..$#_];
+	my $select = IO::Select->new($fibs_socket);
+	my $line;
+	my $deadline;
 
 	foreach ( @bots ) {
 		$botname = $_;
@@ -190,30 +197,36 @@ sub who_bot() {
 		log_str("Command " . $command . "\n");
 		#print "Command " . $command . "\n";
 		$fibs_socket->send($command);
-		sleep(10);
+		sleep(2);
+		$deadline = time() + 30;
 
 		while ( $isLooking ) {
-			$fibs_socket->recv( $chars, 1024 );
-			if ( $chars ) {
-				$string .= $chars;
-				#log_str("Found: ". $string . "\n");
-				#print "Found: ". $string . "\n";
+			if ( time() > $deadline ) {
+				# No clear answer: assume online rather than start a second copy
+				log_str("No answer for " . $botname . "\n");
+				last;
 			}
-			if (index($string, "\n") ne -1 ) {
-				#print "Found: ". $string . "\n";
-				$pos = index($string, "There is no one called");
-				if ( $pos ne -1 ) {
+			$select->can_read(1);
+			$chars = '';
+			my $ok = $fibs_socket->recv( $chars, 1024 );
+			if ( defined($ok) and $chars eq '' ) {
+				log_str("FIBS closed the botLock connection\n");
+				return "";
+			}
+			$string .= $chars;
+			# Judge each complete line; unrelated lines (logins, shouts) are skipped
+			while ( ($pos = index($string, "\n")) ne -1 ) {
+				$line = substr($string, 0, $pos);
+				$string = substr($string, $pos + 1);
+				if ( index($line, "There is no one called") ne -1
+					or index($line, "Ambiguous name") ne -1 ) {
 					log_str("Found " . $botname . "\n");
 					return $botname;
-				} else { # No Error, make sure we actually match our bot
-					$pos = index($string, $botname . " ");
-					if ( $pos eq -1 ) {
-						log_str("Found: " . $botname . "\n");
-						#print "Found " . $botname . "Not in " . $string . "\n";
-						return $botname;
-					}
 				}
-				$isLooking = 0;
+				if ( index($line, $botname . " ") ne -1 ) {
+					$isLooking = 0; # online
+					last;
+				}
 			}
 		}
 	}
